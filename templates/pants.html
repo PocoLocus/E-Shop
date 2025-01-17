@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}E-shop{% endblock %}
+
+{% block content %}
+<div class="my-5">
+  <div class="p-5 text-center bg-body-tertiary">
+    <div class="container py-5">
+      <h1 class="text-body-emphasis">Pants</h1>
+      <p class="col-lg-8 mx-auto lead">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eu auctor tellus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Suspendisse potenti. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eu auctor tellus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Suspendisse potenti.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="container marketing">
+
+    {% for product in products %}
+        <hr class="featurette-divider">
+        <div class="row featurette">
+            <div class="col-md-7 order-md-2">
+                <h2 class="featurette-heading fw-normal lh-1">{{ product.name }}</h2>
+                <p class="lead">{{ product.description }}</p>
+                <h2 class="featurette-heading fw-normal lh-1">Price: {{ product.price }}€</h2>
+                <button class="btn btn-primary add-to-cart" data-product-id="{{ product.id }}">Add to Cart</button>
+            </div>
+
+            <div class="col-md-5 order-md-1">
+                <img
+                    src="{{ product.image }}"
+                    alt="Description of the image"
+                    class="featurette-image img-fluid mx-auto"
+                    width="300"
+                    height="300">
+            </div>
+
+        </div>
+    {% endfor %}
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $(".add-to-cart").click(function() {
+            var productId = $(this).data("product-id");  // Get the product ID from the button's data attribute
+
+            // Send AJAX request to add the product to the cart
+            $.ajax({
+                url: '/add-to-cart',  // Flask route
+                method: 'POST',
+                contentType: 'application/json',  // Sending data as JSON
+                data: JSON.stringify({ 'product_id': productId }),  // Send product_id as JSON
+                success: function(response) {
+                    // Update cart item count or cart details dynamically
+                    var cartCount = response.cart.length;
+                    $('#cart-count').text(cartCount);  // Update cart count on the page
+
+                },
+                error: function() {
+                    alert('Error adding product to cart');
+                }
+            });
+        });
+    });
+    </script>
+</div>
+
+{% endblock %}

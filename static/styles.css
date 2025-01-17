@@ -1,0 +1,44 @@
+.text-vertical {
+    transform: rotate(-90deg);
+    transform-origin: left bottom;
+    white-space: nowrap;
+    color: black;
+  }
+
+.flashes {
+    list-style-type: none;
+    text-align: center;
+    color: red;
+}
+
+.icon-selection {
+    display: flex; /* Arrange items horizontally */
+    flex-wrap: wrap; /* Wrap to the next line if they overflow */
+    gap: 10px; /* Add space between icons */
+    justify-content: center; /* Center-align icons */
+}
+
+.icon-option {
+    text-align: center;
+    width: 80px; /* Set a fixed width for each icon */
+}
+
+.icon-option img {
+    width: 100%; /* Scale the image to fit the container */
+    height: auto; /* Maintain aspect ratio */
+    object-fit: cover;
+    border: 2px solid transparent;
+    border-radius: 4px; /* Optional: rounded corners */
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+/* Highlight the image when the radio button is selected */
+input[type="radio"]:checked + label img {
+    border-color: #007bff; /* Bootstrap primary color */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.8); /* Optional shadow */
+}
+
+input[type="radio"] {
+    display: none; /* Hide the radio button */
+}

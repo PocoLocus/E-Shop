@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}E-shop{% endblock %}
+
+{% block content %}
+
+
+<div class="p-5 text-center bg-body-tertiary">
+    <div class="container">
+    <h1 class="text-body-emphasis">My Cart</h1>
+    {% if cart_list != [] %}
+    <p class="col-lg-8 mx-auto lead">
+        Continue to checkout.
+    </p>
+    {% else %}
+    <p class="col-lg-8 mx-auto lead text-danger">
+        Your cart is empty.
+    </p>
+    {% endif %}
+    </div>
+</div>
+
+<div class="container marketing">
+    {% for product in cart_list %}
+        <hr class="featurette-divider">
+        <div class="row featurette">
+            <div class="col-md-7 order-md-2">
+                <h2 class="featurette-heading fw-normal lh-1">{{ product["name"] }}</h2>
+                <p class="lead">{{ product["description"] }}</p>
+                <h2 class="featurette-heading fw-normal lh-1">Price: {{ product["price"] }}€</h2>
+                <p class="featurette-heading fw-normal lh-1">Quantity: {{ product["quantity"] }}</p>
+                <button class="remove-from-cart btn btn-danger" data-product-id="{{ product['id'] }}">Remove</button>
+            </div>
+            <div class="col-md-2 order-md-1">
+                <img
+                        src="{{ product['image'] }}"
+                        alt="Description of the image"
+                        class="featurette-image img-fluid mx-auto"
+                        width="200"
+                        height="200">
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% if cart_list %}
+<div class="px-4 py-4 my-5 text-center">
+    <h3 class="display-5 fw-bold">Total: {{ total }}€</h3>
+    <div class="col-lg-6 mx-auto">
+      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+          <a href="{{ url_for('clear_cart') }}" class="btn btn-danger mt-3" role="button">Clear Cart</a>
+          <a href="{{ url_for('checkout') if current_user.is_authenticated else url_for('cart') }}"
+            class="btn {{ 'btn-success' if current_user.is_authenticated else 'btn-secondary' }} mt-3"
+            role="button"
+            title="{% if current_user.is_anonymous %}You need to log in to proceed to checkout.{% endif %}">
+            Checkout
+          </a>
+      </div>
+    </div>
+</div>
+{% endif %}
+
+{% with messages = get_flashed_messages()%}
+    {% if messages %}
+        <ul class="flashes">
+            {% for message in messages %}
+              <li>{{ message | safe}}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        // Event listener for the "Remove from Cart" button
+        $(".remove-from-cart").click(function() {
+            var productId = $(this).data("product-id");  // Get the product ID from button's data attribute
+
+            // Send AJAX request to remove the product from the cart
+            $.ajax({
+                url: '/remove-from-cart',  // Flask route
+                method: 'POST',
+                contentType: 'application/json',  // Sending data as JSON
+                data: JSON.stringify({ 'product_id': productId }),  // Send product_id as JSON
+                success: function(response) {
+                    // Update the cart dynamically based on the response
+                    $('#cart-count').text(response.cart.length);  // Update cart item count
+
+                    // Optionally, update the cart list on the page or refresh part of the page
+                    location.reload();  // Reload the page to reflect changes (or you can update it dynamically)
+                },
+                error: function() {
+                    alert('Error removing product from cart');
+                }
+            });
+        });
+    });
+    </script>
+
+
+{% endblock %}

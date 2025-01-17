@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}E-shop{% endblock %}
+
+{% block content %}
+<div class="container col-xxl-8 px-4">
+    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+      <div class="col-10 col-sm-8 col-lg-6">
+        <img src="{{ url_for('static', filename='images/design/pngtree-shopping-cart-filled-to-the-top-with-clothes-image_16010483.jpg') }}" class="d-block mx-lg-auto img-fluid rounded-4" alt="Bootstrap Themes" width="500" height="500" loading="lazy">
+      </div>
+      <div class="col-lg-6">
+        <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">This is my e-shop</h1>
+        <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eu auctor tellus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Suspendisse potenti. Pellentesque vitae risus sed risus gravida eleifend. Aliquam at porttitor libero. Curabitur placerat porta libero sit amet vestibulum.</p>
+      </div>
+    </div>
+</div>
+
+<div class="container px-4 py-2" id="custom-cards">
+    <h2 class="pb-2 border-bottom">Product types</h2>
+    <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-2">
+
+        <div class="col">
+          <a href="{{ url_for('tshirts') }}" class="text-decoration-none">
+          <div class="card card-cover h-100 overflow-hidden rounded-4 shadow-lg"
+               style="background-image: url('static/images/design/shirt-svgrepo-com.svg'); background-size: 70% 70%; background-position: center; background-repeat: no-repeat;">
+            <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+              <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold text-vertical">T-shirts</h3>
+            </div>
+          </div>
+          </a>
+        </div>
+
+        <div class="col">
+          <a href="{{ url_for('pants') }}" class="text-decoration-none">
+          <div class="card card-cover h-100 overflow-hidden rounded-4 shadow-lg"
+               style="background-image: url('static/images/design/pants-svgrepo-com.svg'); background-size: 80% 80%; background-position: center; background-repeat: no-repeat;">
+            <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+              <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold text-vertical">Pants</h3>
+            </div>
+          </div>
+          </a>
+        </div>
+
+        <div class="col">
+          <a href="{{ url_for('socks') }}" class="text-decoration-none">
+          <div class="card card-cover h-100 overflow-hidden rounded-4 shadow-lg"
+               style="background-image: url('static/images/design/socks-svgrepo-com.svg'); background-size: 60% 60%; background-position: center; background-repeat: no-repeat;">
+            <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+              <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold text-vertical">Socks</h3>
+            </div>
+          </div>
+          </a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
