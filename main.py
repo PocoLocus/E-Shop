@@ -13,7 +13,7 @@ import smtplib
 from email.mime.text import MIMEText
 from datetime import date
 import os
-from load_dotenv import load_dotenv
+from dotenv import load_dotenv
 
 # Load .env
 load_dotenv(".env")
