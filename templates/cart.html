@@ -27,7 +27,7 @@
             <div class="col-md-7 order-md-2">
                 <h2 class="featurette-heading fw-normal lh-1">{{ product["name"] }}</h2>
                 <p class="lead">{{ product["description"] }}</p>
-                <h2 class="featurette-heading fw-normal lh-1">Price: {{ product["price"] }}€</h2>
+                <h2 class="featurette-heading fw-normal lh-1">Price: {{ product["price"] * product["quantity"] }}€</h2>
                 <p class="featurette-heading fw-normal lh-1">Quantity: {{ product["quantity"] }}</p>
                 <button class="remove-from-cart btn btn-danger" data-product-id="{{ product['id'] }}">Remove</button>
             </div>

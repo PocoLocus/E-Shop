@@ -243,6 +243,7 @@ def checkout():
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
+    base_url = os.getenv("BASE_URL")
     cart_list = session.get('cart', [])
     line_items = []
     for product in cart_list:
@@ -256,7 +257,7 @@ def create_checkout_session():
             ui_mode='embedded',
             line_items=line_items,
             mode='payment',
-            return_url='http://127.0.0.1:5000/return?session_id={CHECKOUT_SESSION_ID}',
+            return_url=base_url+'/return?session_id={CHECKOUT_SESSION_ID}',
         )
     except Exception as e:
         return str(e)
