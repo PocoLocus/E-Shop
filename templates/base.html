@@ -20,7 +20,10 @@
             <span class="fs-4">E-shop</span>
           {% else %}
             <img width="40" height="32" src="{{ url_for('static', filename='images/design/' + current_user.icon) }}" alt="user icon" class="me-3"/>
-            <span class="fs-4">{{ current_user.first_name }} welcome to E-shop</span>
+            <span class="fs-4 me-3">{{ current_user.first_name }} welcome to E-shop</span>
+            {% if current_user.id == 1 %}
+                <a href="{{ url_for('add_items') }}" class="nav-link bg-success text-white py-1 px-2 rounded">Add items</a>
+            {% endif %}
           {% endif %}
       </div>
 

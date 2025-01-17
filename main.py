@@ -5,13 +5,14 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.orm import DeclarativeBase
 from flask_login import LoginManager, login_user, UserMixin, current_user, logout_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, EmailField, SubmitField, RadioField
+from wtforms import StringField, PasswordField, EmailField, SubmitField, RadioField, SelectField
 from wtforms.validators import InputRequired
 from flask_bcrypt import Bcrypt
 import stripe
 import smtplib
 from email.mime.text import MIMEText
 from datetime import date
+from functools import wraps
 import os
 from dotenv import load_dotenv
 
@@ -60,6 +61,14 @@ class User(UserMixin, db.Model):
     icon: Mapped[str] = mapped_column(String(250), nullable=False, unique=False)
 
 # Define forms
+class AddItemsForm(FlaskForm):
+    name = StringField('Name', validators=[InputRequired()])
+    description = StringField('Description', validators=[InputRequired()])
+    image = StringField('Image (type the url)', validators=[InputRequired()])
+    price = StringField('Price', validators=[InputRequired()])
+    type = SelectField('Type', choices=[('tshirt', 'T-shirt'), ('pants', 'Pants'), ('sock', 'Socks')], validators=[InputRequired()])
+    submit = SubmitField('Submit')
+
 class RegisterForm(FlaskForm):
     first_name = StringField('First name', validators=[InputRequired()])
     last_name = StringField('Last name', validators=[InputRequired()])
@@ -88,6 +97,14 @@ with app.app_context():
 def loader_user(user_id):
     return User.query.get_or_404(user_id)
 
+def only_admin_access(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_anonymous or current_user.id != 1:
+            return redirect(url_for('home'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.route("/")
 def home():
     return render_template("home.html")
@@ -106,6 +123,17 @@ def pants():
 def socks():
     socks_products = db.session.execute(db.select(Product).where(Product.type == "sock")).scalars().all()
     return render_template("socks.html", products=socks_products)
+
+@app.route("/add-items", methods=["GET", "POST"])
+@only_admin_access
+def add_items():
+    form = AddItemsForm()
+    if form.validate_on_submit():
+        new_item = Product(name=form.name.data, description=form.description.data, image=form.image.data, price=form.price.data, type=form.type.data)
+        db.session.add(new_item)
+        db.session.commit()
+        return redirect(url_for("add_items"))
+    return render_template("add-items.html", form=form)
 
 @app.route("/cart")
 def cart():
@@ -305,4 +333,4 @@ def send_email_to_client(cart_list):
 
 
 if __name__ == "__main__":
-    app.run(debug=False, port=5000)
+    app.run(debug=True, port=5000)
