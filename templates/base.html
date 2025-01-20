@@ -36,7 +36,14 @@
             <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link">Log in</a></li>
           {% endif %}
             <li class="nav-item">
-                <a href="{{ url_for('cart') }}" class="nav-link bg-success text-white py-2 px-3 rounded"><i class="fas fa-shopping-cart" ></i>Cart</a>
+                <a href="{{ url_for('cart') }}" class="nav-link cart-link bg-success text-white py-2 px-3 rounded">
+                    <i class="fas fa-shopping-cart" ></i>Cart
+                    {% if items_count != 0 %}
+                        <span id="cart-badge" class="badge badge-pill badge-danger">{{ items_count }}</span>
+                    {% else %}
+                        <span id="cart-badge" class="badge badge-pill badge-danger" style="display: none;"></span>
+                    {% endif %}
+                </a>
             </li>
       </ul>
     </header>

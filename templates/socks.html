@@ -20,7 +20,10 @@
         <hr class="featurette-divider">
         <div class="row featurette">
             <div class="col-md-7 order-md-2">
-                <h2 class="featurette-heading fw-normal lh-1">{{ product.name }}</h2>
+                <div class="d-flex align-items-center">
+                    <h2 class="featurette-heading fw-normal lh-1 me-2">{{ product.name }}</h2>
+                    <a href="{{ url_for('remove_items', item_id=product.id) }}" style="color: red; text-decoration: none; font-size: 1.5em;">🗙</a>
+                </div>
                 <p class="lead">{{ product.description }}</p>
                 <h2 class="featurette-heading fw-normal lh-1">Price: {{ product.price }}€</h2>
                 <button class="btn btn-primary add-to-cart" data-product-id="{{ product.id }}">Add to Cart</button>
@@ -53,9 +56,13 @@
                 contentType: 'application/json',  // Sending data as JSON
                 data: JSON.stringify({ 'product_id': productId }),  // Send product_id as JSON
                 success: function(response) {
-                    // Update cart item count or cart details dynamically
-                    var cartCount = response.cart.length;
-                    $('#cart-count').text(cartCount);  // Update cart count on the page
+                    // Update cart item count dynamically
+                    $('#cart-badge').text(response.cart_count);  // Update the cart badge with the new total count
+                    if (response.cart_count > 0) {
+                        $('#cart-badge').show(); // Show the badge if items are in the cart
+                    } else {
+                        $('#cart-badge').hide(); // Hide the badge if there are no items
+                    }
 
                 },
                 error: function() {

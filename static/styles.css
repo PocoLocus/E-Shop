@@ -1,3 +1,18 @@
+.cart-link {
+  position: relative;
+  text-decoration: none;
+  color: #000;
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  font-size: 16px;
+  padding: 5px 10px;
+  color: yellow
+}
+
 .text-vertical {
     transform: rotate(-90deg);
     transform-origin: left bottom;

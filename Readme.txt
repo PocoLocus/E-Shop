@@ -1,5 +1,19 @@
-- Υπάρχει μια βάση δεδομένων την οποία κοιτάει η σελίδα και προβάλει τα διαθέσιμα προϊόντα.
-- Δίνεται η δυνατότητα στο χρήστη να προσθέσει και να αφαιρέσει πράγματα στο καλάθι (cart) του και αποθηκεύονται προσωρινά (session). Επίσης παρουσιάζεται και το συνολικό καλάθι με την τελική τιμή.
-- Παρότι ο χρήστης μπορεί να αποθηκεύει προσωρινά προϊόντα στο καλάθι του, θα πρέπει να δημιουργήσει λογαριασμό (register) έτσι ώστε να προχωρήσει στην αγορά. Στη συνέχεια μπορεί να κάνει login και logout.
-- Δίνεται η δυνατότητα ο χρήστης να προχωρήσει σε checkout και πληρωμή μέσω embedded form της Stripe.
-- Μετά την αγορά αποστέλλεται στο email που έδωσε ο χρήστης ένα email επιβεβαίωσης.
+Overview:
+E-Shop is a fully functional e-commerce web application developed using Python's Flask framework, designed to provide an online shopping experience. The app provides a user-friendly interface for both customers and administrators. It integrates features such as user registration and authentication, product management, shopping cart functionality, email confirmation and Stripe-based checkout for payments.
+
+Key Features:
+- Customer Shopping Experience: A seamless and intuitive shopping experience, with product browsing by category, easy addition of items to the cart, and a dynamic cart that updates item counts and total prices in real-time.
+- User Registration and Login: Allows users to register and log in to their accounts securely.
+- Product Management: Admins can manage the products available in the store, including adding and removing items through a dedicated admin panel.
+- Shopping Cart: Users can add, remove, and view products in their shopping cart. The cart is stored in the session and updates dynamically.
+- Stripe Payment Integration: Secure Stripe integration for checkout, enabling users to complete their purchases safely using credit or debit cards.
+- Order Confirmation Email: After completing a purchase, a confirmation email is sent to the customer with details about their order, including item names, quantities, and the total amount.
+
+Technologies Used:
+- Flask: The web framework used for building the application.
+- SQLAlchemy: ORM for database interactions, with a SQLite database for local development.
+- Flask-Login: Manages user sessions and login functionality.
+- Stripe: Payment processing integration for handling secure transactions.
+- Email (SMTP): Sends order confirmation emails to customers after successful checkout.
+- HTML/CSS: Frontend development using HTML5 and CSS, providing a user-friendly interface.
+- JavaScript (AJAX): Used for updating the cart dynamically without reloading the page.

@@ -105,24 +105,36 @@ def only_admin_access(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def count_items_in_cart():
+    cart_list = session.get('cart', [])
+    number_of_items = 0
+    if cart_list:
+        for item in cart_list:
+            number_of_items += item["quantity"]
+    return number_of_items
+
 @app.route("/")
 def home():
-    return render_template("home.html")
+    number_of_items_in_cart = count_items_in_cart()
+    return render_template("home.html", items_count = number_of_items_in_cart)
 
 @app.route("/t-shirts")
 def tshirts():
+    number_of_items_in_cart = count_items_in_cart()
     tshirt_products = db.session.execute(db.select(Product).where(Product.type == "tshirt")).scalars().all()
-    return render_template("t-shirts.html", products=tshirt_products)
+    return render_template("t-shirts.html", products=tshirt_products, items_count = number_of_items_in_cart)
 
 @app.route("/pants")
 def pants():
+    number_of_items_in_cart = count_items_in_cart()
     pants_products = db.session.execute(db.select(Product).where(Product.type == "pants")).scalars().all()
-    return render_template("pants.html", products=pants_products)
+    return render_template("pants.html", products=pants_products, items_count = number_of_items_in_cart)
 
 @app.route("/socks")
 def socks():
+    number_of_items_in_cart = count_items_in_cart()
     socks_products = db.session.execute(db.select(Product).where(Product.type == "sock")).scalars().all()
-    return render_template("socks.html", products=socks_products)
+    return render_template("socks.html", products=socks_products, items_count = number_of_items_in_cart)
 
 @app.route("/add-items", methods=["GET", "POST"])
 @only_admin_access
@@ -135,15 +147,25 @@ def add_items():
         return redirect(url_for("add_items"))
     return render_template("add-items.html", form=form)
 
+@app.route("/remove-items", methods=["GET", "POST"])
+@only_admin_access
+def remove_items():
+    item_id = request.args.get("item_id")
+    item_to_remove = db.session.execute(db.select(Product).where(Product.id == item_id)).scalar()
+    db.session.delete(item_to_remove)
+    db.session.commit()
+    return redirect(request.referrer)
+
 @app.route("/cart")
 def cart():
+    number_of_items_in_cart = count_items_in_cart()
     cart_list = session.get('cart', [])
-    total = 0
+    total_price = 0
     for product in cart_list:
-        total += product["price"] * product["quantity"]
+        total_price += product["price"] * product["quantity"]
     if current_user.is_anonymous:
         flash("You should <a href='/login'>login</a> or <a href='/register'>register</a>, in order to continue to checkout.")
-    return render_template("cart.html", cart_list=cart_list, total=total)
+    return render_template("cart.html", cart_list=cart_list, total_price=total_price, items_count = number_of_items_in_cart)
 
 @app.route("/add-to-cart", methods=["GET", "POST"])
 def add_to_cart():
@@ -174,10 +196,14 @@ def add_to_cart():
         })
     session.modified = True  # Ensure session is updated
 
+    # Recalculate the cart count
+    number_of_items_in_cart = count_items_in_cart()
+
     # Return updated cart as JSON
     return jsonify({
         'cart': session['cart'],
-        'message': 'Product added to cart'
+        'message': 'Product added to cart',
+        'cart_count': number_of_items_in_cart  # Include the total count in the response
     })
 
 @app.route("/remove-from-cart", methods=["GET", "POST"])
@@ -205,6 +231,7 @@ def clear_cart():
 # --- Register / Login / Logout users --- #
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    number_of_items_in_cart = count_items_in_cart()
     form = RegisterForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -213,10 +240,11 @@ def register():
         db.session.commit()
         login_user(new_user)
         return redirect(url_for("home"))
-    return render_template("register.html", form=form)
+    return render_template("register.html", form=form, items_count = number_of_items_in_cart)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    number_of_items_in_cart = count_items_in_cart()
     form = LoginForm()
     if form.validate_on_submit():
         all_users = db.session.execute(db.select(User)).scalars().all()
@@ -228,7 +256,7 @@ def login():
             flash("Invalid details, please try again.")
             return redirect(url_for("login"))
         return redirect(url_for("home"))
-    return render_template("login.html", form=form)
+    return render_template("login.html", form=form, items_count = number_of_items_in_cart)
 
 @app.route("/logout")
 def logout():
@@ -290,7 +318,7 @@ def send_email_to_client(cart_list):
     total_amount = 0
 
     for item in cart_list:
-        items_ordered += f'{item["name"]} | {item["quantity"]} | {item["price"]}\n'
+        items_ordered += f'{item["name"]} | {item["quantity"]} | {item["price"]}€\n'
         total_amount += item["price"] * item["quantity"]
 
     body = (f"""
