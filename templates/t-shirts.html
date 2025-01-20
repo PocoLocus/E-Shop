@@ -22,7 +22,9 @@
             <div class="col-md-7 order-md-2">
                 <div class="d-flex align-items-center">
                     <h2 class="featurette-heading fw-normal lh-1 me-2">{{ product.name }}</h2>
-                    <a href="{{ url_for('remove_items', item_id=product.id) }}" style="color: red; text-decoration: none; font-size: 1.5em;">🗙</a>
+                    {% if current_user.is_authenticated and current_user.id == 1 %}
+                        <a href="{{ url_for('remove_items', item_id=product.id) }}" style="color: red; text-decoration: none; font-size: 1.5em;">🗙</a>
+                    {% endif %}
                 </div>
                 <p class="lead">{{ product.description }}</p>
                 <h2 class="featurette-heading fw-normal lh-1">Price: {{ product.price }}€</h2>
