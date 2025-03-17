@@ -15,5 +15,5 @@ Technologies Used:
 - Flask-Login: Manages user sessions and login functionality.
 - Stripe: Payment processing integration for handling secure transactions.
 - Email (SMTP): Sends order confirmation emails to customers after successful checkout.
-- HTML/CSS: Frontend development using HTML5 and CSS, providing a user-friendly interface.
+- HTML/CSS and Bootstrap: Frontend development using HTML5, CSS and Bootstrap, providing a user-friendly interface.
 - JavaScript (AJAX): Used for updating the cart dynamically without reloading the page.
