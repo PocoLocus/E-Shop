@@ -1,5 +1,5 @@
 Overview:
-E-Shop is a fully functional e-commerce web application developed using Python's Flask framework, designed to provide an online shopping experience. The app provides a user-friendly interface for both customers and administrators. It integrates features such as user registration and authentication, product management, shopping cart functionality, email confirmation and Stripe-based checkout for payments.
+This project is a fully functional e-commerce web application built with Flask framework, that provides a shopping experience for customers and a management interface for administrators. It integrates features such as product management, user registration and authentication, shopping cart functionality, email confirmation and Stripe-based checkout for payments.
 
 Key Features:
 - Customer Shopping Experience: A seamless and intuitive shopping experience, with product browsing by category, easy addition of items to the cart, and a dynamic cart that updates item counts and total prices in real-time.
