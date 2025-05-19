@@ -1,5 +1,5 @@
 psycopg2-binary==2.9.9
-gunicorn==22.0.0
+gunicorn==23.0.0
 
 Bootstrap-Flask==2.4.1
 charset-normalizer==3.4.0
