@@ -6,7 +6,7 @@ from sqlalchemy.orm import DeclarativeBase
 from flask_login import LoginManager, login_user, UserMixin, current_user, logout_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, EmailField, SubmitField, RadioField, SelectField
-from wtforms.validators import InputRequired
+from wtforms.validators import InputRequired, Length
 from flask_bcrypt import Bcrypt
 import stripe
 import smtplib
@@ -62,19 +62,19 @@ class User(UserMixin, db.Model):
 
 # Define forms
 class AddItemsForm(FlaskForm):
-    name = StringField('Name', validators=[InputRequired()])
-    description = StringField('Description', validators=[InputRequired()])
-    image = StringField('Image (type the url)', validators=[InputRequired()])
+    name = StringField('Name', validators=[InputRequired(), Length(max=30)])
+    description = StringField('Description', validators=[InputRequired(), Length(max=250)])
+    image = StringField('Image (type the url)', validators=[InputRequired(), Length(max=500)])
     price = StringField('Price', validators=[InputRequired()])
-    type = SelectField('Type', choices=[('tshirt', 'T-shirt'), ('pants', 'Pants'), ('sock', 'Socks')], validators=[InputRequired()])
+    type = SelectField('Type', choices=[('tshirt', 'T-shirt'), ('pants', 'Pants'), ('sock', 'Socks')], validators=[InputRequired(), Length(max=30)])
     submit = SubmitField('Submit')
 
 class RegisterForm(FlaskForm):
-    first_name = StringField('First name', validators=[InputRequired()])
-    last_name = StringField('Last name', validators=[InputRequired()])
-    address = StringField('Address', validators=[InputRequired()])
-    email = EmailField('Email', validators=[InputRequired()])
-    password = PasswordField('Password', validators=[InputRequired()])
+    first_name = StringField('First name', validators=[InputRequired(), Length(max=30)])
+    last_name = StringField('Last name', validators=[InputRequired(), Length(max=30)])
+    address = StringField('Address', validators=[InputRequired(), Length(max=250)])
+    email = EmailField('Email', validators=[InputRequired(), Length(max=250)])
+    password = PasswordField('Password', validators=[InputRequired(), Length(max=250)])
     icon = RadioField('Choose your icon:',
         choices=[
             ('icon_bear.png', 'bear'),
@@ -94,8 +94,8 @@ with app.app_context():
     db.create_all()
 
 @login_manager.user_loader
-def loader_user(user_id):
-    return User.query.get_or_404(user_id)
+def load_user(user_id):
+    return Users.query.get(int(user_id))
 
 def only_admin_access(f):
     @wraps(f)
@@ -116,25 +116,25 @@ def count_items_in_cart():
 @app.route("/")
 def home():
     number_of_items_in_cart = count_items_in_cart()
-    return render_template("home.html", items_count = number_of_items_in_cart)
+    return render_template("home.html", items_count=number_of_items_in_cart)
 
 @app.route("/t-shirts")
 def tshirts():
     number_of_items_in_cart = count_items_in_cart()
     tshirt_products = db.session.execute(db.select(Product).where(Product.type == "tshirt")).scalars().all()
-    return render_template("t-shirts.html", products=tshirt_products, items_count = number_of_items_in_cart)
+    return render_template("t-shirts.html", products=tshirt_products, items_count=number_of_items_in_cart)
 
 @app.route("/pants")
 def pants():
     number_of_items_in_cart = count_items_in_cart()
     pants_products = db.session.execute(db.select(Product).where(Product.type == "pants")).scalars().all()
-    return render_template("pants.html", products=pants_products, items_count = number_of_items_in_cart)
+    return render_template("pants.html", products=pants_products, items_count=number_of_items_in_cart)
 
 @app.route("/socks")
 def socks():
     number_of_items_in_cart = count_items_in_cart()
     socks_products = db.session.execute(db.select(Product).where(Product.type == "sock")).scalars().all()
-    return render_template("socks.html", products=socks_products, items_count = number_of_items_in_cart)
+    return render_template("socks.html", products=socks_products, items_count=number_of_items_in_cart)
 
 @app.route("/add-items", methods=["GET", "POST"])
 @only_admin_access
@@ -151,7 +151,7 @@ def add_items():
 @only_admin_access
 def remove_items():
     item_id = request.args.get("item_id")
-    item_to_remove = db.session.execute(db.select(Product).where(Product.id == item_id)).scalar()
+    item_to_remove = db.get_or_404(Product, item_id)
     db.session.delete(item_to_remove)
     db.session.commit()
     return redirect(request.referrer)
@@ -171,7 +171,7 @@ def cart():
 def add_to_cart():
     # Get the product_id from the AJAX request (in JSON format)
     product_id = request.json.get('product_id')
-    product_to_add_to_cart = Product.query.get_or_404(product_id)
+    product_to_add_to_cart = db.get_or_404(Product, product_id)
 
     # Initialize the cart in the session if it doesn't exist yet
     if 'cart' not in session:
@@ -226,7 +226,7 @@ def remove_from_cart():
 @app.route("/clear-cart")
 def clear_cart():
     session.pop('cart', None)
-    return redirect("cart")
+    return redirect(url_for("cart"))
 
 # --- Register / Login / Logout users --- #
 @app.route("/register", methods=["GET", "POST"])
@@ -240,7 +240,7 @@ def register():
         db.session.commit()
         login_user(new_user)
         return redirect(url_for("home"))
-    return render_template("register.html", form=form, items_count = number_of_items_in_cart)
+    return render_template("register.html", form=form, items_count=number_of_items_in_cart)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -256,7 +256,7 @@ def login():
             flash("Invalid details, please try again.")
             return redirect(url_for("login"))
         return redirect(url_for("home"))
-    return render_template("login.html", form=form, items_count = number_of_items_in_cart)
+    return render_template("login.html", form=form, items_count=number_of_items_in_cart)
 
 @app.route("/logout")
 def logout():
@@ -276,9 +276,9 @@ def create_checkout_session():
     line_items = []
     for product in cart_list:
         new_item = {'price_data': {'currency': 'eur',
-                                      'product_data': {'name': product["name"]},
-                                      'unit_amount': int(product["price"]*100)},
-                       'quantity': product["quantity"]}
+                                   'product_data': {'name': product["name"]},
+                                   'unit_amount': int(product["price"]*100)},
+                                   'quantity': product["quantity"]}
         line_items.append(new_item)
     try:
         stripe_session = stripe.checkout.Session.create(
