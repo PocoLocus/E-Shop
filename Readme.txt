@@ -1,19 +1,18 @@
 Overview:
-This project is a fully functional e-commerce web application built with Flask framework, that provides a shopping experience for customers and a management interface for administrators. It integrates features such as product management, user registration and authentication, shopping cart functionality, email confirmation and Stripe-based checkout for payments.
+This project is an e-commerce web application built with Flask framework. Customers can sign up, browse products, manage a shopping cart and complete purchases via a Stripe-powered checkout, receiving confirmation email upon successful payment. The custom admin interface allows product management including creation, editing, and deletion.
 
-Key Features:
-- Customer Shopping Experience: A seamless and intuitive shopping experience, with product browsing by category, easy addition of items to the cart, and a dynamic cart that updates item counts and total prices in real-time.
-- User Registration and Login: Allows users to register and log in to their accounts securely.
-- Product Management: Admins can manage the products available in the store, including adding and removing items through a dedicated admin panel.
-- Shopping Cart: Users can add, remove, and view products in their shopping cart. The cart is stored in the session and updates dynamically.
-- Stripe Payment Integration: Secure Stripe integration for checkout, enabling users to complete their purchases safely using credit or debit cards.
-- Order Confirmation Email: After completing a purchase, a confirmation email is sent to the customer with details about their order, including item names, quantities, and the total amount.
+Core Features:
+- User authentication: Sign-up, login and logout functionality for customers.
+- Product browsing: View a catalog of available products with detailed information such as title, price and description.
+- Shopping cart system: Add, update and remove products from a persistent cart stored in session.
+- Stripe-based checkout: Complete orders using Stripe integration for secure online payments.
+- Order confirmation: Send confirmation emails to users after successful purchases using automated email service.
+- Custom admin interface: Protected admin interface for managing the product inventory (add, edit, delete).
 
-Technologies Used:
-- Flask: The web framework used for building the application.
-- SQLAlchemy: ORM for database interactions, with a SQLite database for local development.
-- Flask-Login: Manages user sessions and login functionality.
-- Stripe: Payment processing integration for handling secure transactions.
-- Email (SMTP): Sends order confirmation emails to customers after successful checkout.
-- HTML/CSS and Bootstrap: Frontend development using HTML5, CSS and Bootstrap, providing a user-friendly interface.
-- JavaScript (AJAX): Used for updating the cart dynamically without reloading the page.
+Tech Stack:
+- Backend: Flask
+- Database: SQLAlchemy with SQLite (development), PostgreSQL (production)
+- Frontend: HTML, CSS and Bootstrap, JavaScript
+- Authentication: Flask-Login, Flask-WTF, Flask-Bcrypt
+- Payment processing: Stripe API
+- Email service: SMTP with Gmail
