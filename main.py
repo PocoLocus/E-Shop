@@ -95,7 +95,7 @@ with app.app_context():
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Users.query.get(int(user_id))
+    return User.query.get(int(user_id))
 
 def only_admin_access(f):
     @wraps(f)
